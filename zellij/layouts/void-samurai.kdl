@@ -1,0 +1,62 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="file:@@HOME@@/.config/zellij/plugins/zjstatus.wasm" {
+                // تقسيم الشريط العلوي: يسار (الوضع + الاختصارات) | وسط (التبويبات) | يمين (الهدف + البورتات + الشبكة + الرام)
+		format_left   "{mode}#[bg=#161922,fg=#8A8F98]{pipe_zjstatus_hints} {tabs}"
+		format_center ""
+                format_right  "{swap_layout}{command_tgt}{command_ports}{command_net}{command_ram}"
+                format_space  ""
+
+                border_enabled "false"
+                hide_frame_for_single_pane "true"
+
+                // ألوان شارة الأوضاع (Modes)
+                mode_normal  "#[fg=#00FF41,bold] ● NORMAL "
+		mode_locked  "#[fg=#FF3B3B,bold] ● LOCKED "
+		mode_pane    "#[fg=#00D9FF,bold] ● PANE "
+                mode_tab           "#[bg=#C850FF,fg=#0A0C10,bold] TAB "
+                mode_resize        "#[bg=#FFBE28,fg=#0A0C10,bold] RESIZE "
+                mode_scroll        "#[bg=#28E6DC,fg=#0A0C10,bold] SCROLL "
+                mode_search        "#[bg=#FFBE28,fg=#0A0C10,bold] SEARCH "
+                mode_enter_search  "#[bg=#FFBE28,fg=#0A0C10,bold] SEARCH "
+                mode_rename_tab    "#[bg=#C850FF,fg=#0A0C10,bold] RENAME "
+                mode_rename_pane   "#[bg=#00D9FF,fg=#0A0C10,bold] RENAME "
+                mode_move          "#[bg=#FF7832,fg=#0A0C10,bold] MOVE "
+                mode_session       "#[bg=#FF3B3B,fg=#0A0C10,bold] SESSION "
+
+                // تنسيق التبويبات
+                tab_normal              "#[fg=#5C6370] {name} "
+                tab_normal_fullscreen   "#[fg=#5C6370] {name} [F] "
+                tab_normal_sync         "#[fg=#5C6370] {name} [S] "
+                tab_active              "#[fg=#00D9FF,bold] {name} "
+		tab_active_fullscreen   "#[fg=#FFBE28,bold] {name} *FULL* "
+		tab_active_sync         "#[fg=#00FF41,bold] {name} *SYNC* "
+                tab_separator           "#[fg=#282C34]|"
+
+                // اسم التقسيمة (الأقواس داخل الـ format عشان تختفي مع الاسم)
+                swap_layout_format        "#[fg=#5C6370][{name}] "
+                swap_layout_hide_if_empty "true"
+
+                // أجزاء الشريط الأيمن: كل جزء بلونه
+                command_tgt_command     "sh -c ~/.config/zellij/scripts/zj-tgt.sh"
+                command_tgt_format      "#[fg=#FF3B3B,bold]{stdout} "
+                command_tgt_interval    "3"
+
+                command_ports_command   "sh -c ~/.config/zellij/scripts/zj-ports.sh"
+                command_ports_format    "#[fg=#FFBE28]{stdout} "
+                command_ports_interval  "3"
+
+                command_net_command     "sh -c ~/.config/zellij/scripts/zj-net.sh"
+                command_net_format      "#[fg=#00D9FF]{stdout} "
+                command_net_interval    "3"
+
+                command_ram_command     "sh -c ~/.config/zellij/scripts/zj-ram.sh"
+                command_ram_format      "#[fg=#00FF41]{stdout} "
+                command_ram_interval    "3"
+            }
+        }
+        children
+    }
+    tab name="Tab #1"
+}

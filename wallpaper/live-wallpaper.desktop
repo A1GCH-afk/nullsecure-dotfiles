@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Dynamic Live Wallpaper
+Exec=sh -c "sleep 0.25 && xwinwrap -ni -fs -s -st -sp -nf -b -un -- mpv -wid WID --loop --no-audio --profile=fast --vo=x11 --hwdec=no --vf=fps=10 --keepaspect-window=no --panscan=1.0 '@@VIDEO@@'"
+Terminal=false
+X-GNOME-Autostart-enabled=true

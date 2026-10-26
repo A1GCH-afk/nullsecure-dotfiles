@@ -1,0 +1,7 @@
+# never commit backups or the wallpaper video
+*.bak
+*.bak.*
+*.bak-*
+*.mp4
+*.mkv
+*.webm

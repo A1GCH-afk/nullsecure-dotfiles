@@ -1,0 +1,41 @@
+export PATH="$HOME/.local/bin:$PATH"
+alias z="zellij"
+
+# Zellij auto-start + Starship prompt (guarded so a missing binary doesn't break the shell)
+command -v zellij   >/dev/null 2>&1 && eval "$(zellij setup --generate-auto-start zsh)"
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
+
+# Redraw the prompt when the terminal is resized
+TRAPWINCH() {
+  zle && zle -R
+}
+
+# ---- Target helpers (feed the "TGT:" widget in the Zellij status bar) ----
+unalias addtarget rmtarget cleartarget 2>/dev/null
+
+addtarget() {
+  [[ -z "$1" ]] && { echo "usage: addtarget <alias> [alias...]"; return 1 }
+  local a ip n name
+  touch /tmp/target
+  for a in "$@"; do
+    # first match in /etc/hosts (same as what the resolver would pick)
+    ip=$(awk -v a="${a:l}" '!/^[[:space:]]*#/ && NF>1 { for(i=2;i<=NF;i++) if(tolower($i)==a){print $1; exit} }' /etc/hosts)
+    if [[ -z "$ip" ]]; then
+      echo "[-] '$a' not found in /etc/hosts"; continue
+    fi
+    # warn if the alias appears more than once
+    n=$(awk -v a="${a:l}" '!/^[[:space:]]*#/ && NF>1 { for(i=2;i<=NF;i++) if(tolower($i)==a){c++; break} } END{print c+0}' /etc/hosts)
+    (( n > 1 )) && echo "[!] '$a' appears $n times in /etc/hosts, took the first match"
+    name=${${a:u}//[^A-Z0-9_]/_}
+    sed -i "/^${name}=/d" /tmp/target      # avoid duplicate entries
+    echo "${name}=${ip}" >> /tmp/target
+    export "${name}=${ip}"                 # also sets a shell var: nmap $RA
+    echo "[+] ${name}=${ip}"
+  done
+}
+rmtarget()    { sed -i "/^${${1:u}//[^A-Z0-9_]/_}=/d" /tmp/target; unset "${${1:u}//[^A-Z0-9_]/_}"; }
+cleartarget() { : > /tmp/target }
+
+# optional: tab completion from /etc/hosts
+_addtarget() { compadd $(awk '!/^[[:space:]]*#/ && NF>1 {for(i=2;i<=NF;i++) print $i}' /etc/hosts) }
+(( $+functions[compdef] )) && compdef _addtarget addtarget
