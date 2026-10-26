@@ -25,8 +25,8 @@ The installer checks for and installs everything else: `mpv`, `xclip`, `git`, `c
 ## Install
 
 ```bash
-git clone https://github.com/<your-user>/<this-repo>.git
-cd <this-repo>
+git clone https://github.com/A1GCH-afk/nullsecure-dotfiles.git
+cd nullsecure-dotfiles
 bash install.sh
 ```
 
